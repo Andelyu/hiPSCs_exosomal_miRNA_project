@@ -240,7 +240,7 @@ deg_exp_U=get_deinf_fun(gene_inf[,c(12:17)],coldata =coldata, outfile = outfile)
   dev.off()
   grid.draw(p2) # width=6,heigth=6,shared_Dn_DEGs_venn.pdf
   
-  #  enrichment analysis :GO/KEGG
+  # --------------------- enrichment analysis :GO/KEGG---------------------#
   group_deg_df=rbind(rbind(deg_exp_B[,c('log2FoldChange','Row.names')],deg_exp_F[,c('log2FoldChange','Row.names')]),deg_exp_U[,c('log2FoldChange','Row.names')])
   rownames(group_deg_df)=NULL;group_deg_df=data.frame(group_deg_df)
   group_deg_df$group=c(rep('Bips_B',dim(deg_exp_B)[1]),rep('Fips_F',dim(deg_exp_F)[1]),rep('Uips_U',dim(deg_exp_U)[1]))
@@ -289,7 +289,7 @@ all_dn_deg_list=list('Bips_B'=rownames(deg_exp_B[deg_exp_U$log2FoldChange < 0,])
 Up_dem2deg_validated_results=list();Up_dem2deg_predicted_results=list()
 Dn_dem2deg_validated_results=list();Dn_dem2deg_predicted_results=list()
 
-# 比较消耗时间，注意及时保存
+# cost quite long time, save the results after analysis
 library(multiMiR )
 for(i in 1:3){
   Up_dem2deg_validated_results[[i]]=get_multimir(org = 'hsa',mirna = all_up_mirids_list[[i]],target =all_dn_deg_list[[i]],table   = 'validated',summary = TRUE)
@@ -320,6 +320,7 @@ write.csv(dem2deg_predicted_results_df,file = 'results/res_data/dem2deg_predicte
 table(dem2deg_validated_results_df$group)
 table(dem2deg_predicted_results_df$group)
 
+#---------- GO and KEGG analysis for DE miRNAs targeting DE genes--------------#
 dem2deg_results_df=rbind(dem2deg_validated_results_df[,c('mature_mirna_id','target_ensembl','group')],dem2deg_predicted_results_df[,c('mature_mirna_id','target_ensembl','group')])
 dem2deg_results_df=unique(dem2deg_results_df)
 dem2deg_results_df$group=factor(dem2deg_results_df$group,levels = unique(dem2deg_results_df$group))
@@ -355,7 +356,7 @@ ggsave(p,filename = 'results/res_pic/dem2deg_gseKEGG.pdf',width = 6,height = 8,d
 write.csv(data.frame(dem2deg_gseKEGG@compareClusterResult),file = 'results/res_data/dem2deg_gseKEGG.csv')
 
 
-#  calculate the shared pathways of DEGs and DEMs2DEGs 
+#------------  calculate the shared pathways of DEGs and DEMs2DEGs ---------------#
 shared_go_list=list();go_number_list=list()
 shared_kegg_list=list();kegg_number_list=list()
 for (type in unique(dem2deg_gseKEGG@compareClusterResult$group)){
